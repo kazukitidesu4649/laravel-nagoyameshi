@@ -2,6 +2,8 @@
 
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +21,14 @@ Route::get('/', function () {
 });
 
 require __DIR__.'/auth.php';
+
+// 管理者用ルートグループ
+Route::redirect('/admin', '/admin/login');
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
+    
+    Route::middleware('auth:admin')->group(function() {
+        Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
+        Route::resource('users', UserController::class);
+    });
+});
