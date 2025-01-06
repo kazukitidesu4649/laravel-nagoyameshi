@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@csrf
     <div class="col container">
         <div class="row justify-content-center">
             <div class="col-xxl-9 col-xl-10 col-lg-11">
