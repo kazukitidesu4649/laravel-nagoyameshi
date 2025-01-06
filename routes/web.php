@@ -22,11 +22,13 @@ Route::get('/', function () {
 
 require __DIR__.'/auth.php';
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
-    Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
-});
+// 管理者用ルートグループ
+Route::redirect('/admin', '/admin/login');
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function() {
-    Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
-    Route::get('/users/{user}', [Admin\UserController::class, 'show'])->name('users.show');
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
+    
+    Route::middleware('auth:admin')->group(function() {
+        Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
+        Route::resource('users', UserController::class);
+    });
 });

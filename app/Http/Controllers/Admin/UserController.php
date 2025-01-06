@@ -13,8 +13,9 @@ class UserController extends Controller
         $keyword = $request->input('keyword');
         
         // クエリの作成
-        $query = User::query()->when($keyword, function ($query, $keyword){
-                $query->where('name', 'LIKE', "%{$keyword}%")
+        $query = User::query()
+                ->when($keyword, function ($query, $keyword){
+                return $query->where('name', 'LIKE', "%{$keyword}%")
                         ->orwhere('kana', 'LIKE',"%{$keyword}%");
             });
         // ページネーションでデータを取得
@@ -23,10 +24,10 @@ class UserController extends Controller
         $total = $query->count();
         
         //ビューにデータを渡す
-        return view('users.index', compact('users', 'keyword', 'total'));    
+        return view('admin.users.index', compact('users', 'keyword', 'total'));    
     }
 
     public function show(User $user) {
-        return view('Users.show', compact('user'));
+        return view('admin.users.show', compact('user'));
     }
 }
