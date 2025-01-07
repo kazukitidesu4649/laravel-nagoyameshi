@@ -22,4 +22,9 @@ class RestaurantController extends Controller
 
         return view('admin.restaurants.index', compact('restaurants', 'keyword', 'total'));
     }
+
+    // 店舗詳細ページ
+    public function show(Restaurant $restaurant) {
+        return view('admin.restaurants.show',compact('restaurants'));
+    }
 }
