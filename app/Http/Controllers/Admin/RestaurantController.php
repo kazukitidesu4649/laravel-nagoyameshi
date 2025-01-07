@@ -76,4 +76,45 @@ class RestaurantController extends Controller
     public function edit(Restaurant $restaurant) {
         return view('admin.restaurants.edit', compact('restaurant'));
     }
+
+    // 店舗更新機能
+    public function update(Request $request, Restaurant $restaurant) {
+
+        // バリデーション
+        $request->validate([
+            'name' => 'required',
+            'image' => 'image|max:2048',
+            'description' => 'required',
+            'lowest_price' => 'required|numeric|min:0|lte:highest_price',
+            'highest_price' => 'required|numeric|min:0|gte:lowest_price',
+            'postal_code' => 'required|digits:7',
+            'address' => 'required',
+            'opening_time' => 'required|before:closing_time',
+            'closing_time' => 'required|after:opening_time',
+            'seating_capacity' => 'required|numeric|min:0'
+        ]);
+
+        // 入力されたデータを保存する（画像がある場合は、storage/app/public/restaurantsに保存し、変数$imageを代入する）
+        $restaurant->name = $request->input('name');
+        if ($request->hasfile('image')) {
+            $image = $request->file('image')->store('public/restaurants');
+            $restaurant->image = basename($image);
+        } else {
+            $restaurant->image = '';
+        }
+        $restaurant->description = $request->input('description');
+        $restaurant->lowest_price = $request->input('lowest_price');
+        $restaurant->highest_price = $request->input('high_price');
+        $restaurant->postal_code = $request->input('postal_code');
+        $restaurant->address = $request->input('address');
+        $restaurant->opening_time = $request->input('opening_time');
+        $restaurant->closing_time = $request->input('closing_time');
+        $restaurant->seating_capacity = $request->input('seating_capacity');
+        $restaurant->save();
+
+        return redirect()->route('admin.restaurants.show', $restaurant)->with('flash_message', '店舗を編集しました。');
+
+    }
+
+    
 }
