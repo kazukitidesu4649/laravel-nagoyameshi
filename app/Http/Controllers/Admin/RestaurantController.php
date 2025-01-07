@@ -27,4 +27,9 @@ class RestaurantController extends Controller
     public function show(Restaurant $restaurant) {
         return view('admin.restaurants.show',compact('restaurants'));
     }
+
+    // 店舗登録ページ
+    public function create() {
+        return view('admin.restaurants.create');
+    }
 }
