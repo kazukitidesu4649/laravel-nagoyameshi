@@ -116,5 +116,13 @@ class RestaurantController extends Controller
 
     }
 
-    
+    // 店舗削除機能
+
+    public function destroy(Restaurant $restaurant) {
+
+        $restaurant->delete();
+
+        return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を削除しました。');
+    }
+
 }
