@@ -71,4 +71,9 @@ class RestaurantController extends Controller
 
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
     }
+
+    // 店舗編集ページ
+    public function edit(Restaurant $restaurant) {
+        return view('admin.restaurants.edit', compact('restaurant'));
+    }
 }
