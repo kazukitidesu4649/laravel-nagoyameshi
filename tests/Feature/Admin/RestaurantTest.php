@@ -2,15 +2,16 @@
 
 namespace Tests\Feature\Admin;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use App\Models\Admin;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Http\Controllers\Admin\RestaurantController;
 use Database\Factories\UserFactory;
 use Database\Factories\AdminFactory;
 use Database\Factories\RestaurantFactory;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class RestaurantTest extends TestCase
 {
@@ -113,4 +114,49 @@ class RestaurantTest extends TestCase
 
         $response->assertRedirect(route('admin.restaurants.index'));
     }
+
+    // editアクション（店舗編集ページ）
+    public function test_guest_cannot_access_admin_restaurant_edit()
+    {   
+        $response = $this->get('/admin/restaurants/1/edit');
+
+        $response->assertRedirect('admin/login');
+    }
+
+    public function test_user_cannot_access_admin_restaurant_edit()
+    {
+        $user = UserFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create()->toArray();
+        $response = $this->actingAs($user)->get('admin/restaurants/1/edit');
+
+        $response->assertRedirect('admin/login');
+    }
+
+    public function test_admin_can_access_admin_restaurant_edit()
+    {
+        $admin = AdminFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create()->toArray();
+        $response = $this->actingAs($admin,'admin')->get('admin/restaurants/1/edit');
+
+        $response->assertStatus(200);
+    }
+
+    // updateアクション（店舗更新機能）
+    public function test_guest_cannot_update_admin_restaurant()
+    {   
+        $response = $this->put('/admin/restaurants/1',[
+            'name' => 'New Restrant',
+        ]);
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    // public function test_user_cannot_update_admin_restaurant()
+    // {   
+    //     $user = UserFactory::new()->create();
+    //     $response = $this->actingAs($user)
+    //     ->put('/admin/restaurants/1', [],[
+    //         'X-CSRF-TOKEN' => csrf_token(),
+    //     ]);
+    //     $response->assertRedirect(route('admin.restaurants.index'));
+    // }
 }
