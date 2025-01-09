@@ -62,7 +62,7 @@ class RestaurantController extends Controller
         }
         $restaurant->description = $request->input('description');
         $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('high_price');
+        $restaurant->highest_price = $request->input('highest_price');
         $restaurant->postal_code = $request->input('postal_code');
         $restaurant->address = $request->input('address');
         $restaurant->opening_time = $request->input('opening_time');
