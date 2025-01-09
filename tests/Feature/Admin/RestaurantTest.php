@@ -144,19 +144,81 @@ class RestaurantTest extends TestCase
     // updateアクション（店舗更新機能）
     public function test_guest_cannot_update_admin_restaurant()
     {   
-        $response = $this->put('/admin/restaurants/1',[
-            'name' => 'New Restrant',
-        ]);
+    $restaurant = RestaurantFactory::new()->create();
+
+    $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+                     ->put('/admin/restaurants/' . $restaurant->id, [
+                         'name' => 'New Restaurant',
+                     ]);
+
+    $response->assertRedirect(route('admin.login'));
+    }
+
+    public function test_user_cannot_update_admin_restaurant()
+    {
+        $user = UserFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+                     ->actingAs($user)
+                     ->put('/admin/restaurants/' . $restaurant->id, [
+                         'name' => 'New Restaurant',
+                     ]);
+
         $response->assertRedirect(route('admin.login'));
     }
 
-    // public function test_user_cannot_update_admin_restaurant()
-    // {   
-    //     $user = UserFactory::new()->create();
-    //     $response = $this->actingAs($user)
-    //     ->put('/admin/restaurants/1', [],[
-    //         'X-CSRF-TOKEN' => csrf_token(),
-    //     ]);
-    //     $response->assertRedirect(route('admin.restaurants.index'));
-    // }
+    public function test_admin_can_update_admin_restaurant()
+    {
+        $admin = AdminFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+
+        $restaurant_updata = [
+            'name' => 'name',
+            'description' => 'name is name',
+            'lowest_price' => '1',
+            'highest_price' => '10',
+            'postal_code' => '1234567',
+            'address' => '123 main 12',
+            'opening_time' => '12:00',
+            'closing_time' => '22:00',
+            'seating_capacity' => '22',
+        ];
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+        ->actingAs($admin, 'admin')->put('/admin/restaurants/'. $restaurant->id, $restaurant_updata);
+
+        $response->assertRedirect('/admin/restaurants/' .$restaurant->id);
+    }
+
+    // destroyアクション（店舗削除機能）
+    public function test_guest_cannot_destroy_admin_restaurant()
+    {   
+        $restaurant = RestaurantFactory::new()->create();
+
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+                     ->delete('/admin/restaurants/' . $restaurant->id, );
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    public function test_user_cannot_destroy_admin_restaurant()
+    {   
+        $user = UserFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+                    ->actingAs($user,'web') 
+                    ->delete('/admin/restaurants/' . $restaurant->id, );
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    public function test_admin_can_destroy_admin_restaurant()
+    {
+        $admin = AdminFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+        ->actingAs($admin, 'admin')->delete('/admin/restaurants/'. $restaurant->id);
+
+        $response->assertRedirect(route('admin.restaurants.index'));
+    }
 }
