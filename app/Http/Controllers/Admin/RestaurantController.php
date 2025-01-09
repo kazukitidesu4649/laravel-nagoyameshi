@@ -13,12 +13,13 @@ class RestaurantController extends Controller
 
         $keyword = $request->input('keyword');
         
-        $restaurants = Restaurant::query()
-                             ->when($keyword, function($query,$keyword) {
-                                return $query->where('name', 'LIKE', "%{$keyword}%");
-                             });
-        $restaurants = Restaurant::paginate(15);
-        $total = $restaurants->count();
+        if($keyword) {
+            $restaurants = Restaurant::where('name', 'like', "%{$keyword}%")->paginate(15);
+        } else {
+            $restaurants = Restaurant::paginate(15);
+        }
+        
+        $total = $restaurants->total();
 
         return view('admin.restaurants.index', compact('restaurants', 'keyword', 'total'));
     }

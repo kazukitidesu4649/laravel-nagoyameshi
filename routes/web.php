@@ -27,10 +27,7 @@ require __DIR__.'/auth.php';
 Route::redirect('/admin', '/admin/login');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
-    
-    Route::middleware('auth:admin')->group(function() {
         Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
         Route::resource('users', UserController::class);
-        Route::resource('restaurants', RestaurantController::class);
-    });
+        Route::resource('restaurants', Admin\RestaurantController::class);
 });
