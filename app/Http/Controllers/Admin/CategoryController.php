@@ -23,4 +23,17 @@ class CategoryController extends Controller
 
         return view('admin.categories.index', compact('categories', 'keyword', 'total'));
     }
+
+    // storeアクション（カテゴリ登録機能）
+    public function store(Request $request){
+        
+        $varidated = $request->validate([
+            'name' => 'required'
+        ]);
+
+        $category = new Category($varidated);
+        $category->save();
+
+        return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを登録しました。');
+    }
 }
