@@ -62,4 +62,31 @@ class CategoryTest extends TestCase
         $response = $this->actingAs($admin, 'admin')->post('/admin/categories',[$category]);
         $response->assertStatus(302);
     }
+
+    // updateアクション（カテゴリ更新機能）
+    public function test_guest_cannot_update_categories()
+    {
+        $category = CategoryFactory::new()->create();
+
+        $response = $this->put("/admin/categories/{$category->id}",[$category]);
+        $response->assertRedirect('/admin/login');
+    }
+
+    public function test_user_cannot_update_categories()
+    {   
+        $user = UserFactory::new()->create();
+        $category = CategoryFactory::new()->create();
+
+        $response = $this->actingAs($user)->put("/admin/categories/{$category->id}",[$category]);
+        $response->assertRedirect('/admin/login');
+    }
+
+    public function test_admin_can_update_categories()
+    {   
+        $admin = AdminFactory::new()->create();
+        $category = CategoryFactory::new()->create();
+
+        $response = $this->actingAs($admin,'admin')->put("/admin/categories/{$category->id}",[$category]);
+        $response->assertStatus(302);
+    }
 }
