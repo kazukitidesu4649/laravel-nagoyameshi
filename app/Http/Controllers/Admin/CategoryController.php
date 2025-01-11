@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -35,5 +35,25 @@ class CategoryController extends Controller
         $category->save();
 
         return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを登録しました。');
+    }
+
+    // updateアクション（カテゴリ更新機能）
+    public function update(Request $request, Category $category){
+        
+        $varidated = $request->validate([
+            'name' => 'required'
+        ]);
+
+        $category->update($request->all());
+
+        return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを編集しました。');
+    }
+
+    // destroyアクション（カテゴリ削除機能）
+    public function destroy(Category $category) {
+
+        $category->delete();
+
+        return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを削除しました。');
     }
 }
