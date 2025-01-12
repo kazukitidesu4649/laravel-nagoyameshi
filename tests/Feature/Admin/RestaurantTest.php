@@ -158,7 +158,7 @@ class RestaurantTest extends TestCase
     {
         $user = UserFactory::new()->create();
         $restaurant = RestaurantFactory::new()->create();
-
+        
         $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
                      ->actingAs($user)
                      ->put('/admin/restaurants/' . $restaurant->id, [

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+
+    /**
+     * マスアサイン可能な属性のリスト
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', // マスアサイン可能なカラムをリストアップ
+    ];
 }

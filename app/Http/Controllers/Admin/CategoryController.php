@@ -31,8 +31,7 @@ class CategoryController extends Controller
             'name' => 'required'
         ]);
 
-        $category = new Category($varidated);
-        $category->save();
+        Category::create($varidated);
 
         return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを登録しました。');
     }
@@ -44,7 +43,7 @@ class CategoryController extends Controller
             'name' => 'required'
         ]);
 
-        $category->update($request->all());
+        $category->update($varidated);
 
         return redirect(route('admin.categories.index'))->with('flash_message', 'カテゴリを編集しました。');
     }
