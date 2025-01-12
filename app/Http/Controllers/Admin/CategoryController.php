@@ -13,14 +13,15 @@ class CategoryController extends Controller
     public function index (Request $request) {
         $keyword = $request->input('keyword');
 
-        if($keyword) {
-            $categories = Category::where('id', 'name', "%{$keyword}%");
+        if($keyword !== null) {
+            $categories = Category::where('name', 'LIKE', "%{$keyword}%")
+            ->paginate(15);
+            $total = $categories->total();
         } else {
             $categories = Category::paginate(15);
+            $total = 0;
+            $keyword = null;
         }
-
-        $total = $categories->total();
-
         return view('admin.categories.index', compact('categories', 'keyword', 'total'));
     }
 
