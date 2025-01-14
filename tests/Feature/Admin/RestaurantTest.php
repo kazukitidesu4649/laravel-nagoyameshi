@@ -198,7 +198,7 @@ class RestaurantTest extends TestCase
 
     // updateアクション（店舗更新機能）
     public function test_guest_cannot_update_admin_restaurant()
-    {   
+    {
     $restaurant = RestaurantFactory::new()->create();
 
     $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
