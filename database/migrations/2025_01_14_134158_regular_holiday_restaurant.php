@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('regular_holiday_restaurant', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('regular_holiday_id')->constrained()->onDelete('cascade');
-            $table->foreignId('restaurant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('restaurant_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('regular_holiday_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
