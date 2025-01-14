@@ -72,7 +72,7 @@ class RestaurantController extends Controller
         $restaurant->seating_capacity = $request->input('seating_capacity');
         $restaurant->save();
 
-        $category_ids = array_filter($request->input('category_ids'));
+        $category_ids = array_filter($request->input('category_ids',[]));
         $restaurant->categories()->sync($category_ids);
 
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
@@ -83,7 +83,7 @@ class RestaurantController extends Controller
 
         $categories = Category::all();
         $category_ids = $restaurant->categories->pluck('id')->toArray();
-        return view('admin.restaurants.edit', compact('restaurant','categories','categoires_ids'));
+        return view('admin.restaurants.edit', compact('restaurant','categories','category_ids'));
     }
 
     // 店舗更新機能
@@ -120,6 +120,9 @@ class RestaurantController extends Controller
         $restaurant->closing_time = $request->input('closing_time');
         $restaurant->seating_capacity = $request->input('seating_capacity');
         $restaurant->update();
+
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
 
         return redirect()->route('admin.restaurants.show', $restaurant)->with('flash_message', '店舗を編集しました。');
 

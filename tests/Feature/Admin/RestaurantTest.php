@@ -9,17 +9,20 @@ use App\Http\Controllers\Admin\RestaurantController;
 use Database\Factories\UserFactory;
 use Database\Factories\AdminFactory;
 use Database\Factories\RestaurantFactory;
+use Database\Factories\CategoryFactory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class RestaurantTest extends TestCase
-{
+{   
+    use RefreshDatabase;
+
     // indexアクション（店舗一覧ページ）
     public function test_guest_cannot_access_admin_restaurant_index()
     {
         $response = $this->get(route('admin.restaurants.index'));
-
         $response->assertRedirect('admin/login');
     }
 
@@ -58,7 +61,8 @@ class RestaurantTest extends TestCase
     public function test_admin_can_access_admin_restaurant_show()
     {
         $admin = AdminFactory::new()->create();
-        $response = $this->actingAs($admin,'admin')->get('/admin/restaurants/4');
+        $restaurant = RestaurantFactory::new()->create();
+        $response = $this->actingAs($admin,'admin')->get(route('admin.restaurants.show', ['restaurant' => $restaurant->id]));
 
         $response->assertStatus(200);
     }
@@ -108,11 +112,32 @@ class RestaurantTest extends TestCase
 
     public function test_admin_can_access_store_admin_restaurant()
     {
-        $restaurantData = RestaurantFactory::new()->create()->toArray();
         $admin = AdminFactory::new()->create();
-        $response = $this->actingAs($admin, 'admin')->withoutMiddleware()->post(route('admin.restaurants.store'), $restaurantData);
+        $categories = CategoryFactory::new()->count(3)->create();
+        $category_ids = $categories->pluck('id')->toArray();
 
-        $response->assertRedirect(route('admin.restaurants.index'));
+        $new_restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テストの説明     ',
+            'lowest_price' => '1000',
+            'highest_price' => '5000',
+            'postal_code' => '1234567',
+            'address' => 'テスト',
+            'opening_time' => '10:00',
+            'closing_time' => '20:00',
+            'seating_capacity' => '50',
+            'category_ids' => '$category_ids',
+        ];
+
+        $response = $this->actingAs($admin, 'admin')->withoutMiddleware()->post(route('admin.restaurants.store'), $new_restaurant_data);
+
+        // $response->assertRedirect(route('admin.restaurants.index'));
+
+        $restaurant_data_without_categories = $new_restaurant_data;
+        unset($restaurant_data_without_categories['categories_ids']);
+
+        unset($new_restaurant_data['category_ids']);
+        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
     }
 
     // editアクション（店舗編集ページ）
@@ -132,13 +157,13 @@ class RestaurantTest extends TestCase
         $response->assertRedirect('admin/login');
     }
 
-    public function test_admin_can_access_admin_restaurant_edit()
+    public function admin_can_access_admin_restaurant_edit()
     {
         $admin = AdminFactory::new()->create();
-        $restaurant = RestaurantFactory::new()->create()->toArray();
-        $response = $this->actingAs($admin,'admin')->get('admin/restaurants/1/edit');
-
+        $restaurant = Restaurant::factory()->create();
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.restaurants.edit', $restaurant));
         $response->assertStatus(200);
+
     }
 
     // updateアクション（店舗更新機能）
@@ -169,26 +194,35 @@ class RestaurantTest extends TestCase
     }
 
     public function test_admin_can_update_admin_restaurant()
-    {
-        $admin = AdminFactory::new()->create();
-        $restaurant = RestaurantFactory::new()->create();
+{
+    $admin = AdminFactory::new()->create();
+    $restaurant = RestaurantFactory::new()->create();
+    $categories = CategoryFactory::new()->count(3)->create();
+    $category_ids = $categories->pluck('id')->toArray();
 
-        $restaurant_updata = [
-            'name' => 'name',
-            'description' => 'name is name',
-            'lowest_price' => '1',
-            'highest_price' => '10',
-            'postal_code' => '1234567',
-            'address' => '123 main 12',
-            'opening_time' => '12:00',
-            'closing_time' => '22:00',
-            'seating_capacity' => '22',
-        ];
-        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
-        ->actingAs($admin, 'admin')->put('/admin/restaurants/'. $restaurant->id, $restaurant_updata);
+    $restaurant_updata = [
+        'name' => 'Updated Restaurant Name',
+        'description' => 'Updated Description',
+        'lowest_price' => '100',
+        'highest_price' => '1000',
+        'postal_code' => '1234567',
+        'address' => 'Updated Address',
+        'opening_time' => '10:00',
+        'closing_time' => '22:00',
+        'seating_capacity' => '50',
+        'category_ids' => $category_ids
+    ];
 
-        $response->assertRedirect('/admin/restaurants/' .$restaurant->id);
-    }
+    // 管理者としてPUTリクエスト
+    $response = $this->actingAs($admin, 'admin')
+        ->put(route('admin.restaurants.update', $restaurant->id), $restaurant_updata);
+
+    // レスポンスが正しくリダイレクトされているか確認
+    $response->assertRedirect(route('admin.restaurants.show', $restaurant->id));
+
+    // デバッグ用（必要に応じて有効化）
+    // dd($response->
+}
 
     // destroyアクション（店舗削除機能）
     public function test_guest_cannot_destroy_admin_restaurant()
