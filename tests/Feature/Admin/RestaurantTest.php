@@ -120,40 +120,54 @@ class RestaurantTest extends TestCase
         $response->assertRedirect(route('admin.login'));
     }
 
-    public function test_admin_can_store_restaurant()
+    public function test_admin_can_access_store_admin_restaurant()
     {
         $admin = AdminFactory::new()->create();
-        $this->actingAs($admin, 'admin');
+        $category = CategoryFactory::new()->count(3)->create();
+        $category_ids = $category->pluck('id')->toArray();
 
-        $categories = CategoryFactory::new()->count(3)->create();
-        $restaurantData['category_ids'] = $categories->pluck('id')->toArray();
-        $restaurantData['regular_holiday_ids'] = RegularHolidayFactory::new()->count(1)->create()->pluck('id')->toArray();
+        //定休日を設定
+        $regular_holiday = RegularHolidayFactory::new()->count(3)->create();
+        $regular_holiday_ids = $regular_holiday->pluck('id')->toArray();
 
-        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)->post('/admin/restaurants', $restaurantData);
-        $response->assertRedirect('/admin/restaurants');
+        $new_restaurant_data = [
+            'name' => 'テスト',
+            'description' => 'テストの説明     ',
+            'lowest_price' => '1000',
+            'highest_price' => '5000',
+            'postal_code' => '1234567',
+            'address' => 'テスト',
+            'opening_time' => '10:00',
+            'closing_time' => '20:00',
+            'seating_capacity' => '50',
+            'category_ids' => $category_ids,
+            'regular_holiday_ids' => $regular_holiday_ids,
+        ];
 
-        $this->assertDatabaseHas('restaurants', [
-            'name' => $restaurantData['name'],
-            'description' => $restaurantData['description'],
-            'lowest_price' => $restaurantData['lowest_price'],
-            'higheset_price' => $restaurantData['higheset_price'],
-            'postal_code' => $restaurantData['postal_code'],
-            'address' => $restaurantData['address'],
-            'opening_time' => $restaurantData['opening_time'],
-            'closing_time' => $restaurantData['closing_time'],
-            'seating_capacity' => $restaurantData['seating_capacity'],
-        ]);
+        $response = $this->actingAs($admin, 'admin')->withoutMiddleware()->post(route('admin.restaurants.store'), $new_restaurant_data);
 
-        $restaurant = Restaurant::create($restaurantData);
+        // $response->assertRedirect(route('admin.restaurants.index'));
 
-        $restaurant->categories()->attach($categories->pluck('id')->toArray());
+        $restaurant_data_without_categories = $new_restaurant_data;
+        unset($restaurant_data_without_categories['categories_ids']);
 
-        foreach($categories as $category) {
-            $this->assertDatabaseHas('category_restaurant', [
-                'restaurant_id' => $restaurant->id,
-                'category_id' => $category->id
-            ]);
+        $restaurant_data_without_regularHoliday = $new_restaurant_data;
+        unset($restaurant_data_without_regularHoliday['regular_holiday_ids']);
+
+        unset($new_restaurant_data['category_ids'], $new_restaurant_data['regular_holiday_ids']);
+        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+
+        $restaurant = Restaurant::latest('id')->first();
+
+        foreach ($category_ids as $category_id) {
+            $this->assertDatabaseHas('category_restaurant', ['restaurant_id' => $restaurant->id, 'category_id' => $category_id]);
         }
+
+        foreach ($regular_holiday_ids as $regular_holiday_id) {
+            $this->assertDatabaseHas('regular_holiday_restaurant', ['restaurant_id' => $restaurant->id, 'regular_holiday_id' => $regular_holiday_id]);
+        }
+
+        $response->assertRedirect(route('admin.restaurants.index'));
     }
 
     // editアクション（店舗編集ページ）
