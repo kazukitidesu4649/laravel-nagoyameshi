@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class RegularHoliday extends Model
 {
     use HasFactory;
+
+    public function restaurants() {
+        return $this->belongsToMany(Restaurant::class, 'regular_holiday_restaurant');
+    }
 }
