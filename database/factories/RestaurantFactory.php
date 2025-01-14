@@ -17,7 +17,6 @@ class RestaurantFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => '100',
             'name' => 'テスト',
             'description' => 'テスト',
             'lowest_price' => '1000',

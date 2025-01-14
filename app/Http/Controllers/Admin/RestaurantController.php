@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Restaurant;
 use App\Models\Category;
 use App\Models\RegularHoliday;
+use App\Http\Requests\RestaurantRequest;
 
 class RestaurantController extends Controller
 {
@@ -40,7 +41,7 @@ class RestaurantController extends Controller
     }
 
     // 店舗登録機能
-    public function store(Request $request) {
+    public function store(RestaurantRequest $request) {
         
         // バリデーション
         $varidated = $request->validated();
