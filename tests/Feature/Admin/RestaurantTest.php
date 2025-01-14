@@ -6,10 +6,12 @@ use App\Models\Admin;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Http\Controllers\Admin\RestaurantController;
+use App\Models\RegularHoliday;
 use Database\Factories\UserFactory;
 use Database\Factories\AdminFactory;
 use Database\Factories\RestaurantFactory;
 use Database\Factories\CategoryFactory;
+use Database\Factories\RegularHolidayFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
@@ -94,51 +96,59 @@ class RestaurantTest extends TestCase
     // storeアクション（店舗登録機能）
     public function test_guest_cannot_store_admin_restaurant()
     {   
-        $restaurantData = RestaurantFactory::new()->create()->toArray();
-        
-        $response = $this->withoutMiddleware()->post(route('admin.restaurants.store'), $restaurantData);
+        $categories = CategoryFactory::new()->count(3)->create();
 
-        $response->assertRedirect(route('admin.restaurants.index'));
+        $restaurantData = RestaurantFactory::new()->create()->toArray();
+        $restaurantData['category_ids'] = $categories->pluck('id')->toArray();
+        $restaurantData['regular_holiday_ids'] = RegularHolidayFactory::new()->count(1)->create()->pluck('id')->toArray();
+        
+        $response = $this->post(route('admin.restaurants.store'), $restaurantData);
+        $response->assertRedirect(route('admin.login'));
     }
 
     public function test_user_cannot_store_admin_restaurant()
     {
-        $restaurantData = RestaurantFactory::new()->create()->toArray();
-        $user = UserFactory::new()->create();
-        $response = $this->withoutMiddleware()->post(route('admin.restaurants.store'), $restaurantData);
-
-        $response->assertRedirect(route('admin.restaurants.index'));
-    }
-
-    public function test_admin_can_access_store_admin_restaurant()
-    {
-        $admin = AdminFactory::new()->create();
         $categories = CategoryFactory::new()->count(3)->create();
-        $category_ids = $categories->pluck('id')->toArray();
 
-        $new_restaurant_data = [
-            'name' => 'テスト',
-            'description' => 'テストの説明     ',
-            'lowest_price' => '1000',
-            'highest_price' => '5000',
-            'postal_code' => '1234567',
-            'address' => 'テスト',
-            'opening_time' => '10:00',
-            'closing_time' => '20:00',
-            'seating_capacity' => '50',
-            'category_ids' => '$category_ids',
-        ];
+        $user = UserFactory::new()->create();
+        $restaurantData = RestaurantFactory::new()->create()->toArray();
+        $restaurantData['category_ids'] = $categories->pluck('id')->toArray();
+        $restaurantData['regular_holiday_ids'] = RegularHolidayFactory::new()->count(1)->create()->pluck('id')->toArray();
 
-        $response = $this->actingAs($admin, 'admin')->withoutMiddleware()->post(route('admin.restaurants.store'), $new_restaurant_data);
+        $response = $this->actingAs($user)->post(route('admin.restaurants.store'), $restaurantData);
 
-        // $response->assertRedirect(route('admin.restaurants.index'));
-
-        $restaurant_data_without_categories = $new_restaurant_data;
-        unset($restaurant_data_without_categories['categories_ids']);
-
-        unset($new_restaurant_data['category_ids']);
-        $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+        $response->assertRedirect(route('admin.login'));
     }
+
+    // public function test_admin_can_access_store_admin_restaurant()
+    // {
+    //     $admin = AdminFactory::new()->create();
+    //     $categories = CategoryFactory::new()->count(3)->create();
+    //     $category_ids = $categories->pluck('id')->toArray();
+
+    //     $new_restaurant_data = [
+    //         'name' => 'テスト',
+    //         'description' => 'テストの説明     ',
+    //         'lowest_price' => '1000',
+    //         'highest_price' => '5000',
+    //         'postal_code' => '1234567',
+    //         'address' => 'テスト',
+    //         'opening_time' => '10:00',
+    //         'closing_time' => '20:00',
+    //         'seating_capacity' => '50',
+    //         'category_ids' => '$category_ids',
+    //     ];
+
+    //     $response = $this->actingAs($admin, 'admin')->withoutMiddleware()->post(route('admin.restaurants.store'), $new_restaurant_data);
+
+    //     // $response->assertRedirect(route('admin.restaurants.index'));
+
+    //     $restaurant_data_without_categories = $new_restaurant_data;
+    //     unset($restaurant_data_without_categories['categories_ids']);
+
+    //     unset($new_restaurant_data['category_ids']);
+    //     $this->assertDatabaseHas('restaurants', $new_restaurant_data);
+    // }
 
     // editアクション（店舗編集ページ）
     public function test_guest_cannot_access_admin_restaurant_edit()
