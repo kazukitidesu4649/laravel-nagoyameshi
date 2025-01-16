@@ -35,5 +35,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
         Route::resource('restaurants', Admin\RestaurantController::class);
         Route::resource('categories', Admin\CategoryController::class);
         Route::resource('company', Admin\CompanyController::class);
-        Route::resource('terms', Admin\TermController::class);
+        Route::resource('terms', Admin\TermController::class)->except('show');
 });
