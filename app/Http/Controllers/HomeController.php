@@ -17,9 +17,9 @@ public function index() {
     $new_restaurants = Restaurant::orderBy('created_at', 'desc')->take(6)->get();
 
     return view('home', [
-        'highly_rated_restaurant' => $highly_rated_restaurants,
+        'highly_rated_restaurants' => $highly_rated_restaurants,
         'categories' => $categories,
-        'new_restaurant' => $new_restaurants,
+        'new_restaurants' => $new_restaurants,
     ]);
 }
 }
