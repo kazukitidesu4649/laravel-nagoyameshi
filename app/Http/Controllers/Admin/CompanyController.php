@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
 
-
 class CompanyController extends Controller
 {
     // indexアクション（会社概要ページ）
