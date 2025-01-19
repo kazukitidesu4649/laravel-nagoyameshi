@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -34,7 +35,7 @@ class UserRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                'unique:users,email,' .$this->route('user'),
+                Rule::unique('users')->ignore($this->route('user')),
             ],
             'postal_code' => 'required|numeric|digits:7',
             'address' => 'required|string|max:255',
