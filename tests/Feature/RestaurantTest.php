@@ -14,7 +14,7 @@ class RestaurantTest extends TestCase
 {
     use RefreshDatabase;
 
-    // 店舗一覧ページを作ろうのテスト
+    // indexアクションのテスト
     public function test_guest_can_access_restaurant_index()
     {
         $restaurant = RestaurantFactory::new()->create();
@@ -40,6 +40,35 @@ class RestaurantTest extends TestCase
         $admin = AdminFactory::new()->create();
 
         $response = $this->actingAs($admin, 'admin')->get(route('restaurants.index'));
+        $response->assertRedirect(route('admin.home'));
+    }
+
+    // showアクションのテスト
+    public function test_guest_can_access_restaurant_show()
+    {
+        $restaurant = RestaurantFactory::new()->create();
+
+        $response = $this->get(route('restaurants.show', $restaurant->id));
+        $response->assertStatus(200);
+        $response->assertViewIs('restaurants.show');
+    }
+
+    public function test_guest_user_access_restaurant_show()
+    {
+        $user = UserFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+
+        $response = $this->actingAs($user)->get(route('restaurants.show', $restaurant->id));
+        $response->assertStatus(200);
+        $response->assertViewIs('restaurants.show');
+    }
+
+    public function test_guest_admin_access_restaurant_show()
+    {
+        $admin = AdminFactory::new()->create();
+        $restaurant = RestaurantFactory::new()->create();
+
+        $response = $this->actingAs($admin, 'admin')->get(route('restaurants.show', $restaurant->id));
         $response->assertRedirect(route('admin.home'));
     }
 }
