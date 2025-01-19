@@ -37,21 +37,22 @@ class RestaurantController extends Controller
         // カテゴリ絞り込み
         if ($category_id) {
             $query->whereHas('categories', function ($query) use ($category_id){
-                $query->where('id', $category_id);
-            });
-        }
+            $query->where('categories.id', $category_id); // 修正: categories_id → categories.id
+        });
+}
 
         // 価格絞り込み
         if ($price) {
-            $query->where('lowest_price', '<=', $price);
+            $query->where('restaurants.lowest_price', '<=', $price);
         }
 
-        // 並び替え処理
-        if ($sorted === 'rating desc') {
-            $query = Restaurant::ratingSortble($query);
-        } elseif ($sorted === 'popular desc') {
-            $query = Restaurant::popularSortable($query);
-        }
+        // // 並び替え処理
+        // if ($sorted === 'rating desc') {
+        //     $query = $query->ratingSortable(); // モデルで定義したメソッドを呼び出し
+        // } elseif ($sorted === 'popular desc') {
+        //     $query = $query->popularSortable(); // 人気順のメソッドを呼び出し
+        // }
+
 
         $restaurants = $query->paginate(15);
         $categories = Category::all();

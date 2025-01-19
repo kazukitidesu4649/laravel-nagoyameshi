@@ -39,4 +39,26 @@ class Restaurant extends Model
     public function regular_holidays() {
         return $this->belongsToMany(RegularHoliday::class, 'regular_holiday_restaurant', 'restaurant_id', 'regular_holiday_id');
     }
+
+    /**
+     * 評価順で並び替える
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRatingSortable($query)
+    {
+        return $query->orderBy('rating', 'desc');
+    }
+
+    /**
+     * 人気順で並び替える（例: 予約数で並び替える）
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePopularSortable($query)
+    {
+        return $query->orderBy('popular', 'desc'); // popularが予約数と仮定
+    }
 }
