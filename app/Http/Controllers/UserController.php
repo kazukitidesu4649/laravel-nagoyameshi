@@ -22,6 +22,10 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.home');
+        }
+
         if(Auth::id() !== $user->id)
         {
             return redirect()->route('user.index')->with('error_message', '不正なアクセスです。');
@@ -31,6 +35,10 @@ class UserController extends Controller
 
     public function update(UserRequest $request, User $user)
     {
+
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.home');
+        }
 
     if (Auth::id() !== $user->id) {
         return redirect()->route('user.index')->with('error_message', '不正なアクセスです。');
