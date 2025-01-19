@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Restaurant extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
 
     // 一括割り当てを許可するカラムを追加
     protected $fillable = [
@@ -22,6 +23,13 @@ class Restaurant extends Model
         'seating_capacity',
         'category_ids',  // category_ids も追加
         'regular_holiday_ids',  // regular_holiday_ids も追加
+    ];
+
+    // sortableに割り当て
+    public $sortable = [
+        'name',
+        'created_at',
+        'updated_at'
     ];
 
     public function categories()
