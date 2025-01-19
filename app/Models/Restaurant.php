@@ -27,7 +27,6 @@ class Restaurant extends Model
 
     // sortableに割り当て
     public $sortable = [
-        'name',
         'created_at',
         'updated_at'
     ];
