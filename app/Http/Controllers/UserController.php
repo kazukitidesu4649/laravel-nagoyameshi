@@ -11,6 +11,10 @@ class UserController extends Controller
 {
     public function index() {
        
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.home');
+        }
+
         $user = Auth::user();
 
         return view('user.index', compact('user'));
