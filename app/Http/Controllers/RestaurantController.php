@@ -69,4 +69,9 @@ class RestaurantController extends Controller
             'total',
         ));
     }
+
+    // indexアクション（店舗詳細ページ）
+    public function show(Restaurant $restaurant) {
+        return view('restaurants.show', compact('restaurant'));
+    }
 }

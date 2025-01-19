@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
+use App\Models\Restaurant;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,8 @@ require __DIR__.'/auth.php';
 
 Route::group(['middleware' => 'guest:admin'], function() {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::resource('restaurants', RestaurantController::class);
+    Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+    Route::get('/restaurants/{restaurant}', [RestaurantController::class, 'show'])->name('restaurants.show');
 });
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
