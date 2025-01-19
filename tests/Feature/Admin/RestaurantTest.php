@@ -72,7 +72,7 @@ class RestaurantTest extends TestCase
     // createアクション（店舗登録ページ）
     public function test_guest_cannot_access_admin_restaurant_create()
     {   
-        $response = $this->get('/admin/restaurants/create');
+        $response = $this->get(route('admin.restaurants.create'));
 
         $response->assertRedirect('admin/login');
     }

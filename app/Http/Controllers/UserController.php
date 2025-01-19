@@ -4,28 +4,44 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index(Request $request) {
-        //検索ワードを取得
-        $keyword = $request->input('keyword');
-        
-        // クエリの作成
-        $query = User::query()->when($keyword, function ($query, $keyword){
-                $query->where('name', 'LIKE', "%{$keyword}%")
-                        ->orwhere('kana', 'LIKE',"%{$keyword}%");
-            });
-        // ページネーションでデータを取得
-        $users = $query->paginate(15);
-        //総数の計算
-        $total = $query->count();
-        
-        //ビューにデータを渡す
-        return view('users.index', compact('users', 'keyword', 'total'));    
+    public function index() {
+       
+        $user = Auth::user();
+
+        return view('user.index', compact('user'));
     }
 
-    public function show(User $user) {
-        return view('Users.show', compact('user'));
+    public function edit(User $user)
+    {
+        if(Auth::id() !== $user->id)
+        {
+            return redirect()->route('user.index')->with('error_message', '不正なアクセスです。');
+        }
+        return view('user.edit', compact('user'));
+    }
+
+    public function update(UserRequest $request, User $user)
+    {
+
+    if (Auth::id() !== $user->id) {
+        return redirect()->route('user.index')->with('error_message', '不正なアクセスです。');
+    }
+
+    // バリデーションが通ったデータを取得
+    $validated = $request->validated();
+
+    // ユーザーの更新
+    $user->update($validated);
+
+    // フラッシュメッセージの追加
+    $request->session()->flash('flash_message', '会員情報を編集しました。');
+
+    // ユーザー一覧ページにリダイレクト
+    return redirect()->route('user.index');
     }
 }

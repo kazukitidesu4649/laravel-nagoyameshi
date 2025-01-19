@@ -10,16 +10,16 @@ class HomeController extends Controller
 {
     // indexアクション
 
-public function index() {
+    public function index() {
 
-    $highly_rated_restaurants = Restaurant::take(6)->get();
-    $categories = Category::all();
-    $new_restaurants = Restaurant::orderBy('created_at', 'desc')->take(6)->get();
+        $highly_rated_restaurants = Restaurant::take(6)->get();
+        $categories = Category::all();
+        $new_restaurants = Restaurant::orderBy('created_at', 'desc')->take(6)->get();
 
-    return view('home', [
-        'highly_rated_restaurants' => $highly_rated_restaurants,
-        'categories' => $categories,
-        'new_restaurants' => $new_restaurants,
-    ]);
-}
+        return view('home', [
+            'highly_rated_restaurants' => $highly_rated_restaurants,
+            'categories' => $categories,
+            'new_restaurants' => $new_restaurants,
+        ]);
+    }
 }
