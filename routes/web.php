@@ -29,7 +29,7 @@ Route::group(['middleware' => 'guest:admin'], function() {
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::prefix('user')->name('user.')->group(function() {
         Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('user/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::patch('{user}', [UserController::class, 'update'])->name('update');
     });
 });
