@@ -11,7 +11,9 @@ use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\SubscriptionController;
 use App\Models\Restaurant;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +39,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::patch('{user}', [UserController::class, 'update'])->name('update');
+        Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
     });
 });
 
