@@ -31,4 +31,53 @@ class SubscriptionController extends Controller
             return back()->withErrors(['error' => '登録処理中にエラーが発生しました:'. $e->getMessage()]);
         }
     }
+
+    // editアクション（お支払い方法編集）
+    public function edit(){
+        $user = Auth::user();
+
+        $intent = $user->createSetupIntent();
+
+        return view('subscription.edit', [
+            'user' => $user,
+            'intent' => $intent,
+        ]);
+    }
+
+    // updateアクション（お支払い方法更新）
+    public function update(Request $request){
+        $user = Auth::user();
+        
+        try {
+            $user->updateDefaultPaymentMethod($request->paymentMethodId);
+
+            return redirect('/')
+                ->with('flash_message', 'お支払い方法を変更しました。');
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => 'お支払いの方法の更新に失敗しました:' . $e->getMessage()]);
+        }
+    }
+
+    // cancelアクション（有料プラン解約ページ）
+    public function cancel() {
+        $user = Auth::user();
+
+        return view('subscription.cancel', compact('user'));
+    }
+
+    // destroyアクション（有料プラン解約機能）
+    public function destroy() {
+        $user = Auth::user();
+
+        try {
+            $user->subscription('premium_plan')->cancelNow();
+
+            return redirect()->route('home')
+                    ->with('flash_message', '有料プランを解約しました。');
+        } catch (\Exception $e) {
+            return back()
+                    ->withErrors(['error' => '解約処理に失敗しました:' . $e->getMessage()]);
+        }
+    }
 }

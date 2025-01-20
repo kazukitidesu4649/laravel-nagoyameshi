@@ -2,6 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::patch('{user}', [UserController::class, 'update'])->name('update');
         Route::get('/subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
+        Route::post('/subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
     });
 });
 
