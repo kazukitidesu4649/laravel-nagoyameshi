@@ -28,11 +28,8 @@ class SubscriptionController extends Controller
     // storeアクション（登録機能）
     public function store(Request $request)
     {
-        $paymentMethod = $request->input('payment_method');
-        \Log::info('Payment Method: ' . $paymentMethod);
-        
         $user = Auth::user();
-        $paymentMethod = $request->input('payment_method');
+        $paymentMethod = $request->paymentMethodId;
 
         if ($user->subscribed('premium_plan')) {
             return redirect('/')
