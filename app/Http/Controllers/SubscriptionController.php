@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Stripe\Stripe;
+use Stripe\PaymentMethod;
+use Stripe\Subscription;
 
 class SubscriptionController extends Controller
 {
@@ -23,27 +26,34 @@ class SubscriptionController extends Controller
     }
 
     // storeアクション（登録機能）
-    public function store(Request $request) {
-
+    public function store(Request $request)
+    {
+        $paymentMethod = $request->input('payment_method');
+        \Log::info('Payment Method: ' . $paymentMethod);
+        
         $user = Auth::user();
-
         $paymentMethod = $request->input('payment_method');
 
         if ($user->subscribed('premium_plan')) {
             return redirect('/')
                     ->with('flash_message', 'すでに有料プランに登録済みです。');
         }
-        
+
+        // StripeのAPIキーを設定
+        Stripe::setApiKey(config('services.stripe.secret'));
+
         try {
+            // PaymentMethodを使ってサブスクリプションを作成
             $user->newSubscription('premium_plan', 'price_1Qj9UuLrDOeQcDxNv4X1he93')
-            ->create($paymentMethod);
+                ->create($paymentMethod);
 
             session()->flash('flash_message', '有料プランへの登録が完了しました。');
             return redirect()->route('home');
-        } catch (\Exception $se) {
-            return back()->withErrors(['error' => '登録処理中にエラーが発生しました:'. $se->getMessage()]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => '登録処理中にエラーが発生しました: ' . $e->getMessage()]);
         }
     }
+
 
     // editアクション（お支払い方法編集）
     public function edit(){
