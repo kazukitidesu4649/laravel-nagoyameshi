@@ -9,6 +9,14 @@ class SubscriptionController extends Controller
 {
     // createアクション(登録ページ)
     public function create() {
+
+        $user = auth()->user();
+
+        // 有料会員の場合はリダイレクト
+        if ($user->subscribed('premium_plan')) {
+            return redirect('/')->with('flash_message', 'すでに有料会員です。');
+        }
+
         $intent = Auth::user()->createSetupIntent();
 
         return view('subscription.create', compact('intent'));
@@ -21,6 +29,11 @@ class SubscriptionController extends Controller
 
         $paymentMethod = $request->input('payment_method');
 
+        if ($user->subscribed('premium_plan')) {
+            return redirect('/')
+                    ->with('flash_message', 'すでに有料プランに登録済みです。');
+        }
+        
         try {
             $user->newSubscription('premium_plan', 'price_1Qj9UuLrDOeQcDxNv4X1he93')
             ->create($paymentMethod);
@@ -28,7 +41,7 @@ class SubscriptionController extends Controller
             session()->flash('flash_message', '有料プランへの登録が完了しました。');
             return redirect()->route('home');
         } catch (\Exception $se) {
-            return back()->withErrors(['error' => '登録処理中にエラーが発生しました:'. $e->getMessage()]);
+            return back()->withErrors(['error' => '登録処理中にエラーが発生しました:'. $se->getMessage()]);
         }
     }
 
