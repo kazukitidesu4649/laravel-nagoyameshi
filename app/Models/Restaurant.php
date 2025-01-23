@@ -61,4 +61,9 @@ class Restaurant extends Model
     {
         return $query->orderBy('popular', 'desc'); // popularが予約数と仮定
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
