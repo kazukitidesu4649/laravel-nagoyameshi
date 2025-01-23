@@ -39,6 +39,11 @@ class ReviewController extends Controller
 
     // storeアクション（レビュー作成機能）
     public function store(Request $request, Restaurant $restaurant, Review $review) {
+
+        if (auth('admin')->check()) {
+            return redirect()->route('admin.home');
+        }
+        
         $request->validate(([
             'score' => 'required|numeric|between:1,5',
             'content' => 'required',
@@ -53,7 +58,7 @@ class ReviewController extends Controller
 
         $review->save();
 
-        return redirect()->route('restaurants.index', $restaurant)
+        return redirect()->route('restaurants.reviews.index', ['restaurant' => $restaurant->id])
             ->with('flash_message', 'レビューを投稿しました。');
     }
 
