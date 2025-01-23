@@ -61,7 +61,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     // レビュー管理
     Route::get('restaurants/{restaurant}/reviews', [ReviewController::class, 'index'])->name('restaurants.reviews.index');
     Route::post('restaurants/{restaurant}/reviews', [ReviewController::class, 'store'])->name('restaurants.reviews.store');
-    // Route::middleware('Subscribed')->resource('restaurants.reviews', ReviewController::class)->except(['index', 'show']);
+    Route::middleware('Subscribed')->resource('restaurants.reviews', ReviewController::class)->except(['index','store', 'show']);
 });
 
 // 管理者用ルートグループ
