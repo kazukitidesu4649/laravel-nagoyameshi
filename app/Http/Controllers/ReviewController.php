@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Models\Restaurant;
-use App\Http\Models\Review;
-use App\Http\Models\User;
+use App\Models\Restaurant;
+use App\Models\Review;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
