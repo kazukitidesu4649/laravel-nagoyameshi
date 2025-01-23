@@ -36,16 +36,16 @@ class SubscriptionTest extends TestCase
     //     $response->assertStatus(200);
     // }
 
-    // public function test_subscrimeb_user_cannot_access_create_subscrimeb()
-    // {
-    //     $user = UserFactory::new()->create();
-    //     $user->newSubscription('premium_plan', 'price_1Qj9UuLrDOeQcDxNv4X1he93')->create('pm_card_visa');
+    public function test_subscrimeb_user_cannot_access_create_subscrimeb()
+    {
+        $user = UserFactory::new()->create();
+        $user->newSubscription('premium_plan', 'price_1Qj9UuLrDOeQcDxNv4X1he93')->create('pm_card_visa');
 
-    //     $response = $this->actingAs($user)->get('subscription/create');
+        $response = $this->actingAs($user)->get('subscription/create');
 
-    //     $response->assertRedirect('/');
-    //     $response->assertSessionHas('flash_message', 'すでに有料会員です。');
-    // }
+        $response->assertRedirect('/');
+        $response->assertSessionHas('flash_message', 'すでに有料会員です。');
+    }
 
     // public function test_admin_cannot_access_create_subscrimeb()
     // {

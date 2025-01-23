@@ -37,6 +37,26 @@ class ReviewTest extends TestCase
         $response->assertViewIs('reviews.index');
     }
 
-    
+    public function test_authenticated_paid_user_can_access_user_review_index_page()
+    {
+        $user = User::factory()->create();
+        $user->newSubscription('premium_plan', 'price_1Qj9UuLrDOeQcDxNv4X1he93')->create('pm_card_visa');
 
+        $restaurant = Restaurant::factory()->create();
+      
+        $response = $this->actingAs($user)
+            ->get(route('restaurants.reviews.index', $restaurant));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('reviews.index');
+    }
+
+    public function test_authenticated_admin_cannot_access_user_review_index_page()
+    {
+        $admin = AdminFactory::new()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $response=$this->actingAs($admin, 'admin')->get(route('restaurants.reviews.index', $restaurant));
+        $response->assertRedirect(route('admin.home'));
+    }
 }

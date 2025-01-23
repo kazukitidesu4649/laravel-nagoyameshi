@@ -33,7 +33,7 @@ class ReviewController extends Controller
     }
 
     // createアクション（レビュー作成ページ）
-    public function create(Restaurant $rstaurant){
+    public function create(Restaurant $restaurant){
         return view('reviews.create', compact('restaurant'));
     }
 
@@ -41,13 +41,13 @@ class ReviewController extends Controller
     public function store(Request $request, Restaurant $restaurant, Review $review) {
         $request->validate(([
             'score' => 'required|numeric|between:1,5',
-            'content' => 'requird',
+            'content' => 'required',
         ]));
 
         $review = new Review([
             'score' => $request->score,
             'content' => $request->content,
-            'restaurant_id' => $restaurant_id,
+            'restaurant_id' => $restaurant->id,
             'user_id' => auth()->id(),
         ]);
 
@@ -63,6 +63,8 @@ class ReviewController extends Controller
             return redirect()->route('restaurants.reviews.index', ['restaurant' => $restaurant])
                 ->with('error_message', '不正なアクセスです.');
         }
+        // ユーザーがアクセスできる場合、編集フォームを表示する
+        return view('reviews.edit', compact('restaurant', 'review'));
     }
 
     // updateアクション（レビュー更新機能）
@@ -73,7 +75,7 @@ class ReviewController extends Controller
         }
 
         $request->validate([
-            'score' => 'required|numeric|between1,5',
+            'score' => 'required|numeric|between:1,5',
             'content' => 'required',
         ]);
 
@@ -85,7 +87,7 @@ class ReviewController extends Controller
 
     // destroyアクション（レビュー削除）
     public function destroy(Request $request, Restaurant $restaurant, Review $review) {
-        if($review->user_id !== auth->id()) {
+        if($review->user_id !== auth()->id()) {
             return redirect()->route('restaurants.reviews.index', ['restaurant' => $restaurant])
             ->with('error_message', '不正なアクセスです。');
         }
