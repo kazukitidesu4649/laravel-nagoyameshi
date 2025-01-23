@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ReviewController;
 use App\Models\Restaurant;
 
 
@@ -56,6 +57,10 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
             Route::delete('/', [SubscriptionController::class, 'destroy'])->name('destroy');
         });
     });
+
+    // レビュー管理
+    Route::get('restaurants/{restaurant}/reviews', [ReviewController::class, 'index'])->name('restaurants.reviews.index');
+    Route::middleware('Subscribed')->resource('restaurants.reviews', ReviewController::class)->except(['index', 'show']);
 });
 
 // 管理者用ルートグループ

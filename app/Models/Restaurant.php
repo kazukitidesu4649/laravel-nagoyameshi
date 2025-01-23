@@ -66,4 +66,10 @@ class Restaurant extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // 店舗の平均評価順
+    public static function ratingSortable($query)
+    {
+        return $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', 'desc');
+    }
 }
