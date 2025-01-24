@@ -72,4 +72,8 @@ class Restaurant extends Model
     {
         return $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', 'desc');
     }
+
+    public function reservations() {
+        return $this->hasMany(Reservation::class);
+    }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->datetimes('reserved_datetime');
+            $table->datetime('reserved_datetime')->nullable();
             $table->integer('number_of_people');
             $table->foreignId('restaurant_id')
                     ->constrained()->cascadeOnDelete();
