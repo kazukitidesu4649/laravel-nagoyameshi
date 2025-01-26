@@ -46,12 +46,12 @@ class RestaurantController extends Controller
             $query->where('restaurants.lowest_price', '<=', $price);
         }
 
-        // // 並び替え処理
-        // if ($sorted === 'rating desc') {
-        //     $query = $query->ratingSortable(); // モデルで定義したメソッドを呼び出し
-        // } elseif ($sorted === 'popular desc') {
-        //     $query = $query->popularSortable(); // 人気順のメソッドを呼び出し
-        // }
+        // 並び替え処理
+        if ($sorted === 'rating desc') {
+            $query = $query->ratingSortable(); // モデルで定義したメソッドを呼び出し
+        } elseif ($sorted === 'popular desc') {
+            $query = $query->popularSortable(); // 人気順のメソッドを呼び出し
+        }
 
 
         $restaurants = $query->paginate(15);

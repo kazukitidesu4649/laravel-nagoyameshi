@@ -76,4 +76,10 @@ class Restaurant extends Model
     public function reservations() {
         return $this->hasMany(Reservation::class);
     }
+
+    // 予約数が多い順
+    public static function popularSortable($query)
+    {
+        return $query->withCount('reservations')->orderBy('reservations_count', 'desc ');
+    } 
 }

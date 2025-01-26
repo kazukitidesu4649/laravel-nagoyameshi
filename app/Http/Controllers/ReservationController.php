@@ -8,10 +8,16 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
+    public function __construct() {
+        if (auth('admin')->check()){
+            return redirect()->route('admin.home');
+        }
+    }
+
     // indexアクション（予約一覧ページ）
     public function index(Reservation $reservation){
         
-        $reservation = Reservation::where('user_id', auth()->id())
+        $reservations = Reservation::where('user_id', auth()->id())
             ->orderBy('reserved_datetime', 'desc')
             ->paginate(15);
         
@@ -27,7 +33,7 @@ class ReservationController extends Controller
 
         $validated = $request->validate([
             'reservation_date' => 'required|date_format:Y-m-d',
-            'reservation_time' => 'required|date_format:H-i',
+            'reservation_time' => 'required|date_format:H:i',
             'number_of_people' => 'required|integer|between:1,50',
         ]);
 
@@ -46,8 +52,10 @@ class ReservationController extends Controller
             ->with('with_message', '予約が完了しました。');
     }
 
-    public function destroy(Reservation $reservation) {
+    public function destroy($id) {
 
+        $reservation = Reservation::findOrFail($id);
+        
         if ($reservation->user_id !== auth()->id()) {
             return redirect()->route('reservations.index')
                 ->with('flash_message', '予約をキャンセルしました。');

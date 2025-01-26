@@ -65,10 +65,10 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::middleware('Subscribed')->resource('restaurants.reviews', ReviewController::class)->except(['index','store', 'show']);
 
     // 予約管理
-    Route::middleware('subscribed')->get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-    Route::middleware('subscribed')->get('/restaurants/{restaurant}/reservations/create', [ReservationController::class, 'create'])->name('restaurants.reservations.create');
-    Route::middleware('subscribed')->post('/restaurants/{restaurant}/reservations', [ReservationController::class, 'store'])->name('restaurants.reservations.store');
-    Route::middleware('subscribed')->delete('/reservations/{reservations}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+    Route::middleware('Subscribed')->get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::middleware('Subscribed')->get('/restaurants/{restaurant}/reservations/create', [ReservationController::class, 'create'])->name('restaurants.reservations.create');
+    Route::middleware('Subscribed')->post('/restaurants/{restaurant}/reservations', [ReservationController::class, 'store'])->name('restaurants.reservations.store');
+    Route::middleware('Subscribed')->delete('/reservations/{reservations}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 });
 
 // 管理者用ルートグループ
