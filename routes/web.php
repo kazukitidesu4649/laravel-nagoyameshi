@@ -18,6 +18,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TermController;
+use App\Models\Company;
 use App\Models\Restaurant;
 use Illuminate\Auth\Events\Verified;
 
@@ -38,6 +39,8 @@ Route::group(['middleware' => 'guest:admin'], function() {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
     Route::get('/restaurants/{restaurant}', [RestaurantController::class, 'show'])->name('restaurants.show');
+    Route::get('/company', [CompanyController::class, 'index'])->name('company.index');
+    Route::get('/terms', [CompanyController::class, 'index'])->name('terms.index');
 });
 // 認証とメール認証が必要なルート
 Route::group(['middleware' => ['auth', 'verified']], function(){

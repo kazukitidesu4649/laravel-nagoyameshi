@@ -16,6 +16,6 @@ class TermController extends Controller
     public function index()
     {
         $term = Term::first();
-        return view('term.index', compact('term'));
+        return view('terms.index', compact('term'));
     }
 }
