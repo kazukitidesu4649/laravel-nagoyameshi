@@ -10,12 +10,14 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CompanyController;
-use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
+use App\Http\Controllers\Admin\TermController as AdminTermController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\TermController;
 use App\Models\Restaurant;
 use Illuminate\Auth\Events\Verified;
 
