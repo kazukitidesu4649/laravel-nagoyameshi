@@ -36,8 +36,17 @@ class Restaurant extends Model
         return $this->belongsToMany(Category::class, 'category_restaurant');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function regular_holidays() {
         return $this->belongsToMany(RegularHoliday::class, 'regular_holiday_restaurant', 'restaurant_id', 'regular_holiday_id');
+    }
+
+    public function reservations() {
+        return $this->hasMany(Reservation::class);
     }
 
     /**
@@ -62,19 +71,10 @@ class Restaurant extends Model
         return $query->orderBy('popular', 'desc'); // popularが予約数と仮定
     }
 
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
-
     // 店舗の平均評価順
     public static function ratingSortable($query)
     {
         return $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', 'desc');
-    }
-
-    public function reservations() {
-        return $this->hasMany(Reservation::class);
     }
 
     // 予約数が多い順

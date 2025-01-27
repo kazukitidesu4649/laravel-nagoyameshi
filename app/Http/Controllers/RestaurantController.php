@@ -48,9 +48,9 @@ class RestaurantController extends Controller
 
         // 並び替え処理
         if ($sorted === 'rating desc') {
-            $query = $query->ratingSortable(); // モデルで定義したメソッドを呼び出し
+            $query = $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', 'desc'); // モデルで定義したメソッドを呼び出し
         } elseif ($sorted === 'popular desc') {
-            $query = $query->popularSortable(); // 人気順のメソッドを呼び出し
+            $query = $query->withCount('reservations')->orderBy('reservations_count', 'desc');
         }
 
 
