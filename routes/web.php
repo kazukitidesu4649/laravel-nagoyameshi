@@ -17,7 +17,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\FavoriteController;
 use App\Models\Restaurant;
-
+use Illuminate\Auth\Events\Verified;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,11 +57,6 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
             Route::patch('update', [SubscriptionController::class, 'update'])->name('update');
             Route::get('cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
             Route::delete('/', [SubscriptionController::class, 'destroy'])->name('destroy');
-
-            // お気に入り機能
-            Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-            Route::post('/favorites/{restaurant}', [FavoriteController::class , 'store'])->name('favorites.store');
-            Route::delete('/favorites/{restaurant}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
         });
     });
 
@@ -76,7 +71,12 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::middleware('Subscribed')->post('/restaurants/{restaurant}/reservations', [ReservationController::class, 'store'])->name('restaurants.reservations.store');
     Route::middleware('Subscribed')->delete('/reservations/{reservations}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 
-    
+    // お気に入り機能
+    Route::middleware(['auth', 'verified', 'Subscribed'])->group(function(){
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/{restaurant}', [FavoriteController::class , 'store'])->name('favorites.store');
+    Route::delete('/favorites/{restaurant}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+    });
 });
 
 // 管理者用ルートグループ

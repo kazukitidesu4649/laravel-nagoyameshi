@@ -36,7 +36,7 @@ class FavoriteController extends Controller
         }
 
         $user = auth()->user();
-        $user->favorite_restaurants()->attach($restaurant->id());
+        $user->favorite_restaurants()->attach($restaurant->id);
 
         return redirect()->back()->with('flash_message', 'お気に入りに追加しました。');
     }
@@ -45,7 +45,7 @@ class FavoriteController extends Controller
     public function destroy(Restaurant $restaurant){
 
         $user = auth()->user();
-        $user->favorite_restaurants()->detach($restaurant->id());
+        $user->favorite_restaurants()->detach($restaurant->id);
 
         return redirect()->back()->with('flash_message', 'お気に入りを解除しました。');
     }
