@@ -49,7 +49,7 @@ class ReservationController extends Controller
         $reservation->save();
 
         return redirect()->route('reservations.index')
-            ->with('with_message', '予約が完了しました。');
+            ->with('flash_message', '予約を完了しました。');
     }
 
     public function destroy($id) {
