@@ -89,7 +89,7 @@ Route::redirect('/admin', '/admin/login');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
         Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
-        Route::resource('users', UserController::class);
+        Route::resource('users', Admin\UserController::class);
         Route::resource('restaurants', Admin\RestaurantController::class);
         Route::resource('categories', Admin\CategoryController::class);
         Route::resource('company', Admin\CompanyController::class);
