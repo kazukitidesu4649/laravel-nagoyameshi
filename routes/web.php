@@ -29,6 +29,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin
     
     Route::middleware('auth:admin')->group(function() {
         Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
-        Route::resource('users', UserController::class);
+        Route::resource('users', Admin\UserController::class);
     });
 });
