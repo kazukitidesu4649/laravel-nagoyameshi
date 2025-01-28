@@ -44,7 +44,7 @@ class RestaurantController extends Controller
     public function store(RestaurantRequest $request) {
         
         // バリデーション
-        $varidated = $request->validated();
+        $request->validated();
 
         // 入力されたデータを保存する（画像がある場合は、storage/app/public/restaurantsに保存し、変数$imageを代入する）
         $restaurant = new Restaurant();

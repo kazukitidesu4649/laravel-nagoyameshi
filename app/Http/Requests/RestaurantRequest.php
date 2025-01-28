@@ -32,10 +32,10 @@ class RestaurantRequest extends FormRequest
             'opening_time' => 'required|before:closing_time',
             'closing_time' => 'required|after:opening_time',
             'seating_capacity' => 'required|numeric|min:0',
-            'category_ids' => 'array',
-            'category_ids.*' => 'exists:categories,id',
-            'regular_holiday_ids' => 'array',
-            'regular_holiday_ids.*' => 'exists:regular_holidays,id',
+            // 'category_ids' => 'array',
+            // 'category_ids.*' => 'exists:categories,id',
+            // 'regular_holiday_ids' => 'array',
+            // 'regular_holiday_ids.*' => 'exists:regular_holidays,id',
         ];
     }
 }
